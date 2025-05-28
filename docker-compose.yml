@@ -1,0 +1,46 @@
+services:
+  dfserver:
+    init: true
+    build:
+      context: .
+      # In .env make TARGET=dev for faster builds at the cost of size and stopping for some reason
+      target: ${TARGET:-prod}
+    environment:
+      EXPOSED_PORT: 8080
+      ROLE: dfserver
+      HOST: webserver
+      PORT: ${DFQ_INT_PORT:-8080}
+      FEDERATION_HOST: federation
+      FEDERATION_PORT: 8080
+    develop:
+      watch:
+        - action: rebuild
+          path: ./src
+    stop_grace_period: ${DEV_GRACE_PERIOD:-5s}
+
+  federation:
+    init: true
+    build:
+      context: .
+      target: ${TARGET:-prod}
+    environment:
+      EXPOSED_PORT: 8080
+      ROLE: federation
+      HOST: webserver
+      PORT: ${DFQ_INT_PORT:-8080}
+      DF_HOST: dfserver
+      DF_PORT: 8080
+    develop:
+      watch:
+        - action: rebuild
+          path: ./src
+    stop_grace_period: ${DEV_GRACE_PERIOD:-5s}
+
+  # Replace with your own container
+  webserver:
+    image: strm/helloworld-http
+    depends_on:
+      - dfserver
+      - federation
+    stop_grace_period: 1s
+
