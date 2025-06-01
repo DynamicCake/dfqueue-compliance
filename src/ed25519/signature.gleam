@@ -32,6 +32,8 @@ pub fn validate_signature(
   bits: BitArray,
   key: public_key.PublicKey,
 ) -> Bool {
+  let assert True =
+    public_key.serialize_to_bits(key) |> bit_array.byte_size() == 32
   bindings.valid_signature(sig.buf, bits, public_key.serialize_to_bits(key))
 }
 

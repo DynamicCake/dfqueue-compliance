@@ -6,10 +6,11 @@ services:
       # In .env make TARGET=dev for faster builds at the cost of size and stopping for some reason
       target: ${TARGET:-prod}
     environment:
-      EXPOSED_PORT: 8080
       ROLE: dfserver
       HOST: webserver
       PORT: ${DFQ_INT_PORT:-8080}
+      DF_HOST: dfserver
+      DF_PORT: 8080
       FEDERATION_HOST: federation
       FEDERATION_PORT: 8080
     develop:
@@ -24,12 +25,13 @@ services:
       context: .
       target: ${TARGET:-prod}
     environment:
-      EXPOSED_PORT: 8080
       ROLE: federation
       HOST: webserver
       PORT: ${DFQ_INT_PORT:-8080}
       DF_HOST: dfserver
       DF_PORT: 8080
+      FEDERATION_HOST: federation
+      FEDERATION_PORT: 8080
     develop:
       watch:
         - action: rebuild
